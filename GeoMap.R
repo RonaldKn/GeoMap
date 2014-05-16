@@ -1,5 +1,5 @@
-GeoMap <- function(map, file, erea="Nederland", zoom=7, type="terrain",
-                   size=3, alpha=.5, color="darkred"){
+geomap <- function(map, file1, file2="none", area="Nederland", zoom=7, type="terrain",
+                   size=3, alpha=.5, color1="darkred", color2="purple"){
   
   # GENERAL INFORMATION
   # code desinged by Ronald C. Knetsch (mail@ronaldknetsch.nl)
@@ -10,13 +10,15 @@ GeoMap <- function(map, file, erea="Nederland", zoom=7, type="terrain",
   
   # FUNCTION PARAMETERS
   # map = input and output directory (eg.: "c:\temp\")
-  # file = name of input file (eg.: "address.csv")
-  # erea = erae for geo map (eg.: "Nederland")
+  # file1 = name of input file for general points (eg.: "locations.csv")
+  # file2 = name of input file for refference points (eg.: "ref_locations.csv")
+  # area = erae for geo map (eg.: "Nederland")
   # zoom = level of detail, 1 - 21 (whole numbers)
   # type = Google map type (eg.:"terrain", "roadmap", "satelite", "hybride")
   # size = size of points in plot
   # alpha = transparency of points in plot
-  # color = color of points in plot
+  # color1 = color for general points in plot
+  # color2 = color for reference points in plot
   
   # use package ggmap
   # for more info see: http://gis.stackexchange.com/questions/68663/population-density-map
@@ -24,10 +26,20 @@ GeoMap <- function(map, file, erea="Nederland", zoom=7, type="terrain",
   library(ggmap)
   
   # read adress file
-  df.geomap <- read.csv2(paste(map, file, sep=""))
+  if(file2=="none"){
+    df.general <- read.csv2(paste(map, file1, sep=""))
+  }else{
+    df.general <- read.csv2(paste(map, file1, sep=""))
+    df.refference <- read.csv2(paste(map, file2, sep=""))
+  }
+  
   
   # get map and plot data on 
-  map <- get_map(location=erea, zoom=zoom, maptype=type)
-  ggmap(map)
-    + geom_point(aes(x=Long, y=Lat), data=df.geomap, alpha=alpha, color=color, size=size)
+  map <- get_map(location=area, zoom=zoom, maptype=type)
+  
+  if(file2=="none"){
+    ggmap(map) + geom_point(aes(x=Long, y=Lat), data=df.general, alpha=alpha, color=color1, size=size)
+  }else{
+    ggmap(map) + geom_point(aes(x=Long, y=Lat), data=df.general, alpha=alpha, color=color1, size=size) + geom_point(aes(x=Long, y=Lat), data=df.refference, alpha=.8, color=color2, size=6) 
+  }
 }
