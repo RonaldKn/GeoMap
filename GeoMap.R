@@ -29,6 +29,7 @@ geomap <- function(map, file, area="Nederland", zoom=7, type="terrain"){
   
   # get map and plot data on 
   map <- get_map(location=area, zoom=zoom, maptype=type)
+  #map <- get_map(location=area, zoom=zoom, maptype=type, color = "bw")
   
   # subset segmentation groups
   # count groups
